@@ -19,7 +19,8 @@ const settings = ref<Settings>({
 	maxAbsoluteValue: 20
 });
 
-const operations = ref<InteractiveOperation[]>([]);
+//const operations = ref<InteractiveOperation[]>([]);
+const operations = ref<InteractiveOperation[]>(InteractiveOperation.randomArray(settings.value));
 
 const start = () => {
 	operations.value = [];
