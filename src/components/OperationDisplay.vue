@@ -11,8 +11,9 @@ const emit = defineEmits<{
 const numberInput = ref(props.operation.answer);
 
 const updateNumberInput = () => {
-	if (numberInput.value)
+	if (typeof numberInput.value === 'number')
 		emit('update:answer', numberInput.value);
+	console.log(props.operation, numberInput.value);
 };
 import { watch } from 'vue';
 

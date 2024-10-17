@@ -2,8 +2,7 @@
 import { ref } from 'vue';
 import type Settings from './lib/Settings';
 import SettingsSelector from './components/SettingsSelector.vue';
-import type { InteractiveOperation } from './lib/Operation';
-import { generateInteractiveOperation } from './lib/generateOperation';
+import { InteractiveOperation } from './lib/Operation';
 import OperationDisplay from './components/OperationDisplay.vue';
 
 const settings = ref<Settings>({
@@ -24,29 +23,7 @@ const operations = ref<InteractiveOperation[]>([]);
 
 const start = () => {
 	operations.value = [];
-	for (let i = 0; i < settings.value.operationsCount; i++) {
-		operations.value.push(generateInteractiveOperation(settings.value));
-	}
-}
-
-const checkAnswer = (index: number, value: number) => {
-	const operation = operations.value[index];
-	let result;
-	switch (operation.operator) {
-		case '+':
-			result = operation.operands[0] + operation.operands[1];
-			break;
-		case '-':
-			result = operation.operands[0] - operation.operands[1];
-			break;
-		case '*':
-			result = operation.operands[0] * operation.operands[1];
-			break;
-		case '/':
-			result = operation.operands[0] / operation.operands[1];
-			break;
-	}
-	operations.value[index].correct = result === value;
+	operations.value = InteractiveOperation.randomArray(settings.value);
 }
 
 </script>
@@ -58,7 +35,7 @@ const checkAnswer = (index: number, value: number) => {
 	<button @click='start'>Start</button>
 	<div class='operations-container'>
 		<OperationDisplay v-for='(operation, index) in operations' :key='index' :operation='operation'
-			@update:answer='checkAnswer(index, $event)' />
+			@update:answer='e => operation.setAnswer(e)' />
 	</div>
 	<SettingsSelector :settings='settings' @update:settings='settings = $event' />
 </template>
