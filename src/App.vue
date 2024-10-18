@@ -19,6 +19,7 @@ const settings = ref<Settings>({
 	maxAbsoluteValue: 20
 });
 
+
 //const operations = ref<InteractiveOperation[]>([]);
 const operations = ref<InteractiveOperation[]>(InteractiveOperation.randomArray(settings.value));
 
@@ -36,7 +37,7 @@ const start = () => {
 	<button @click='start'>Start</button>
 	<div class='operations-container'>
 		<OperationDisplay v-for='(operation, index) in operations' :key='index' :operation='operation'
-			@update:answer='e => operation.setAnswer(e)' />
+			@update:answer='e => operation.setAnswer(e)' class='{{  }}' />
 	</div>
 	<SettingsSelector :settings='settings' @update:settings='settings = $event' />
 </template>
@@ -44,6 +45,8 @@ const start = () => {
 <style scoped>
 .operations-container {
 	display: flex;
-	flex-wrap: wrap;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
 }
 </style>

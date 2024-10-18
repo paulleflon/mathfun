@@ -10,12 +10,12 @@ const emit = defineEmits<{
 
 const numberInput = ref(props.operation.answer);
 
-const updateNumberInput = () => {
+const updateNumberInput: (e: Event) => void = e => {
 	if (typeof numberInput.value === 'number')
 		emit('update:answer', numberInput.value);
-	console.log(props.operation, numberInput.value);
+	const target = e.target as HTMLInputElement;
+	target.style.width = `${target.value.length || 1}ch`;
 };
-
 watch(
 	() => props.operation,
 	(newVal, oldVal) => {
@@ -37,8 +37,12 @@ watch(
 				<div class='right-operand'>{{ props.operation.operands[1] }}</div>
 				<div class='equals'> = </div>
 			</div>
-			<input type='number' v-bind:disabled='props.operation.correct' v-model='numberInput'
-				@input='updateNumberInput' />
+
+			<div class='input-container'>
+				<input type='number' v-bind:disabled='props.operation.correct' v-model='numberInput'
+					@input='updateNumberInput' />
+				<div class='focus-bar'></div>
+			</div>
 		</div>
 	</Transition>
 </template>
@@ -46,18 +50,21 @@ watch(
 <style scoped>
 .operation {
 	margin: 20px;
-	display: flex;
 }
 
 .left-side {
-	display: flex;
+	display: inline-flex;
 	margin-right: 5px;
 	font: 50pt Arial;
 }
 
-input {
+.input-container {
 	display: inline-block;
-	width: 100px;
+	position: relative;
+}
+
+input {
+	width: 1ch;
 	appearance: none;
 	margin: 0;
 	color: white;
@@ -66,6 +73,21 @@ input {
 	outline: none;
 	border: none;
 	border-bottom: 1px solid white;
+}
+
+.focus-bar {
+	position: absolute;
+	bottom: -1px;
+	left: 0;
+	width: 100%;
+	height: 3px;
+	background-color: white;
+	transform: scaleX(0);
+	transition: .3s ease;
+}
+
+input:focus+.focus-bar {
+	transform: scale(1);
 }
 
 input::-webkit-inner-spin-button,
