@@ -1,14 +1,21 @@
 <script setup lang='ts'>
 import type { InteractiveOperation } from '@/lib/Operation';
-import { defineEmits, defineProps, ref, watch } from 'vue';
+import { computed, defineEmits, defineProps, onMounted, popScopeId, ref, watch } from 'vue';
 
-const props = defineProps<{ operation: InteractiveOperation }>();
-
+const props = defineProps<{ operation: InteractiveOperation, index: number, position: 'current' | 'previous' | 'next' }>();
 const emit = defineEmits<{
 	(e: 'update:answer', value: number): void;
 }>();
 
+const input = ref();
+
 const numberInput = ref(props.operation.answer);
+console.log(props.index, props.position);
+const css = computed(() => {
+	return {
+		transform: `scale(${props.position === 'current' ? 1 : 0.1}) translateY(${props.index * 500}%)`
+	}
+});
 
 const updateNumberInput: (e: Event) => void = e => {
 	if (typeof numberInput.value === 'number')
@@ -17,20 +24,30 @@ const updateNumberInput: (e: Event) => void = e => {
 	target.style.width = `${target.value.length || 1}ch`;
 };
 watch(
-	() => props.operation,
+	() => props,
 	(newVal, oldVal) => {
-		if (newVal.operands[0] !== oldVal.operands[0] || newVal.operands[1] !== oldVal.operands[1] || newVal.operator !== oldVal.operator) {
+		if (newVal.operation.operands[0] !== oldVal.operation.operands[0] || newVal.operation.operands[1] !== oldVal.operation.operands[1]
+			|| newVal.operation.operator !== oldVal.operation.operator) {
 			numberInput.value = null;
 		}
+		if (newVal.position === 'current')
+			input.value.focus();
 	},
 	{ deep: true }
 );
+
+
+
+onMounted(() => {
+	if (props.position === 'current')
+		input.value.focus();
+});
 </script>
 
 <template>
 	<Transition>
 
-		<div class='operation' v-if='!props.operation.correct'>
+		<div class='operation' v-if='!props.operation.correct' :style='css'>
 			<div class='left-side'>
 				<div class='left-operand'>{{ props.operation.operands[0] }}</div>
 				<div class='operator'>{{ props.operation.operator }}</div>
@@ -40,7 +57,7 @@ watch(
 
 			<div class='input-container'>
 				<input type='number' v-bind:disabled='props.operation.correct' v-model='numberInput'
-					@input='updateNumberInput' />
+					@input='updateNumberInput' ref='input' />
 				<div class='focus-bar'></div>
 			</div>
 		</div>
@@ -49,13 +66,13 @@ watch(
 
 <style scoped>
 .operation {
-	margin: 20px;
+	transition: transform .3s ease;
 }
 
 .left-side {
 	display: inline-flex;
 	margin-right: 5px;
-	font: 50pt Arial;
+	font: 100pt Arial;
 }
 
 .input-container {
@@ -68,7 +85,7 @@ input {
 	appearance: none;
 	margin: 0;
 	color: white;
-	font: 50pt Arial;
+	font-size: 100pt;
 	background-color: transparent;
 	outline: none;
 	border: none;

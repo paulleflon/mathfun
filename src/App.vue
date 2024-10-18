@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import type Settings from './lib/Settings';
 import SettingsSelector from './components/SettingsSelector.vue';
 import { InteractiveOperation } from './lib/Operation';
@@ -20,12 +20,21 @@ const settings = ref<Settings>({
 });
 
 
+
 //const operations = ref<InteractiveOperation[]>([]);
 const operations = ref<InteractiveOperation[]>(InteractiveOperation.randomArray(settings.value));
+const current = ref(0);
 
 const start = () => {
 	operations.value = [];
 	operations.value = InteractiveOperation.randomArray(settings.value);
+}
+
+const updateAnswer = (value: number, index: number) => {
+	const op = operations.value[index];
+	op.setAnswer(value);
+	if (op.correct)
+		current.value++;
 }
 
 </script>
@@ -37,16 +46,27 @@ const start = () => {
 	<button @click='start'>Start</button>
 	<div class='operations-container'>
 		<OperationDisplay v-for='(operation, index) in operations' :key='index' :operation='operation'
-			@update:answer='e => operation.setAnswer(e)' class='{{  }}' />
+			@update:answer='(value) => updateAnswer(value, index)' :index='index - current'
+			:position='index === current ? "current" : index > current ? "next" : "previous"' />
 	</div>
 	<SettingsSelector :settings='settings' @update:settings='settings = $event' />
 </template>
 
 <style scoped>
 .operations-container {
+	position: fixed;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	justify-content: center;
 	width: 100%;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	flex: 1;
+}
+
+.operations-container .operation {
+	position: absolute;
 }
 </style>

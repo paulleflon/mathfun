@@ -70,7 +70,7 @@ watch(model, (newModel) => {
 	padding: 10px;
 	border-radius: 10px;
 	backdrop-filter: blur(10px);
-
+	transform: translate(-100%, 0);
 	& fieldset {
 		margin: 10px 0;
 	}
