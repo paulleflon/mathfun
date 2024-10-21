@@ -1,9 +1,9 @@
 <script setup lang='ts'>
-import { ref, useTemplateRef } from 'vue';
-import type Settings from './lib/Settings';
-import SettingsSelector from './components/SettingsSelector.vue';
-import { InteractiveOperation } from './lib/Operation';
+import {ref} from 'vue';
 import OperationDisplay from './components/OperationDisplay.vue';
+import SettingsSelector from './components/SettingsSelector.vue';
+import {InteractiveOperation} from './lib/Operation';
+import type Settings from './lib/Settings';
 
 const settings = ref<Settings>({
 	allowedOperations: {
@@ -54,7 +54,7 @@ const updateAnswer = (value: number, index: number) => {
 
 <style scoped>
 .operations-container {
-	position: fixed;
+	position: absolute;
 	display: flex;
 	flex-direction: column;
 	align-items: center;

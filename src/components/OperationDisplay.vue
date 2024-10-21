@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import type { InteractiveOperation } from '@/lib/Operation';
-import { computed, defineEmits, defineProps, onMounted, popScopeId, ref, watch } from 'vue';
+import { computed, defineEmits, defineProps, onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{ operation: InteractiveOperation, index: number, position: 'current' | 'previous' | 'next' }>();
 const emit = defineEmits<{
@@ -13,7 +13,7 @@ const numberInput = ref(props.operation.answer);
 console.log(props.index, props.position);
 const css = computed(() => {
 	return {
-		transform: `scale(${props.position === 'current' ? 1 : 0.1}) translateY(${props.index * 500}%)`
+		transform: `scale(${props.position === 'current' ? 1 : 0.3}) translateY(${props.index * 300}%)`,
 	}
 });
 
@@ -56,8 +56,8 @@ onMounted(() => {
 			</div>
 
 			<div class='input-container'>
-				<input type='number' v-bind:disabled='props.operation.correct' v-model='numberInput'
-					@input='updateNumberInput' ref='input' />
+				<input type='number' v-bind:disabled='props.operation.correct || props.position !== "current"'
+					v-model='numberInput' @input='updateNumberInput' ref='input' />
 				<div class='focus-bar'></div>
 			</div>
 		</div>
@@ -66,7 +66,7 @@ onMounted(() => {
 
 <style scoped>
 .operation {
-	transition: transform .3s ease;
+	transition: .3s ease;
 }
 
 .left-side {
