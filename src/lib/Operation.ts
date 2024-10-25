@@ -38,6 +38,27 @@ export class InteractiveOperation extends Operation {
 		this.correct = this.result === answer;
 	}
 
+	isConform(settings: Settings) {
+		/* Check decimals */
+		if (!settings.allowDecimals && this.operands.some(operand => operand % 1 !== 0))
+			return false;
+		/* Check negatives */
+		if (!settings.allowNegatives && this.operands.some(operand => operand < 0))
+			return false;
+		/* Check decimal places */
+		if (settings.allowDecimals &&
+			this.operands.some(operand => String(operand).split('.').length > settings.decimalPlaces))
+			return false;
+		/* Check max absolute value */
+		if (this.operands.some(operand => Math.abs(operand) > settings.maxAbsoluteValue))
+			return false
+		/* Check operator */
+		if (!settings.allowedOperations.has(this.operator))
+			return false;
+
+		return true;
+	}
+
 	static random(settings: Settings) {
 		const maxAbs = settings.maxAbsoluteValue;
 		const operands: [number, number] = [0, 0];
@@ -47,18 +68,13 @@ export class InteractiveOperation extends Operation {
 			operands[0] = parseFloat(operands[0].toFixed(settings.decimalPlaces));
 			operands[1] = parseFloat(operands[1].toFixed(settings.decimalPlaces));
 		}
-		const operators: Operator[] = [];
-		if (settings.allowedOperations.sum) operators.push('+');
-		if (settings.allowedOperations.difference) operators.push('-');
-		if (settings.allowedOperations.product) operators.push('*');
-		if (settings.allowedOperations.division) operators.push('/');
-		const operator: Operator = utils.randArray(operators) as Operator;
+		const operator: Operator = utils.randArray(Array.from(settings.allowedOperations)) as Operator;
 		return new InteractiveOperation(operands, operator);
 	}
 
-	static randomArray(settings: Settings) {
+	static randomArray(count: number, settings: Settings) {
 		const operations: InteractiveOperation[] = [];
-		for (let i = 0; i < settings.operationsCount; i++) {
+		for (let i = 0; i < count; i++) {
 			operations.push(InteractiveOperation.random(settings));
 		}
 		return operations;

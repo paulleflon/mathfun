@@ -1,14 +1,11 @@
+import type { Operator } from './Operation';
+
 export default interface Settings {
-	allowedOperations: {
-		sum: boolean;
-		difference: boolean;
-		product: boolean;
-		division: boolean;
-	}
+	allowedOperations: Set<Operator>;
 	allowNegatives: boolean;
 	allowDecimals: boolean;
 	decimalPlaces: number;
-	operationsCount: number;
 	maxAbsoluteValue: number;
 };
 
+export function checkQuerySettings(query: )

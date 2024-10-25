@@ -20,19 +20,19 @@ watch(model, (newModel) => {
 		<fieldset>
 			<legend>Allowed Operations</legend>
 			<div class='checkbox-group'>
-				<input type='checkbox' id='allow-sum' v-model='model.allowedOperations.sum' />
+				<input type='checkbox' id='allow-sum' value='+' v-model='model.allowedOperations' />
 				<label for='allow-sum'>Allow Sum</label>
 			</div>
 			<div class='checkbox-group'>
-				<input type='checkbox' id='allow-difference' v-model='model.allowedOperations.difference' />
+				<input type='checkbox' id='allow-difference' value='-' v-model='model.allowedOperations' />
 				<label for='allow-difference'>Allow Difference</label>
 			</div>
 			<div class='checkbox-group'>
-				<input type='checkbox' id='allow-product' v-model='model.allowedOperations.product' />
+				<input type='checkbox' id='allow-product' value='*' v-model='model.allowedOperations' />
 				<label for='allow-product'>Allow Product</label>
 			</div>
 			<div class='checkbox-group'>
-				<input type='checkbox' id='allow-division' v-model='model.allowedOperations.division' />
+				<input type='checkbox' id='allow-division' value='/' v-model='model.allowedOperations' />
 				<label for='allow-division'>Allow Division</label>
 			</div>
 		</fieldset>
@@ -47,10 +47,6 @@ watch(model, (newModel) => {
 		<div class='input-group' v-if='props.settings.allowDecimals'>
 			<label for='decimal-places'>Decimal Places:</label>
 			<input type='number' id='decimal-places' v-model='model.decimalPlaces' />
-		</div>
-		<div class='input-group'>
-			<label for='operations-count'>Operations Count:</label>
-			<input type='number' id='operations-count' v-model='model.operationsCount' />
 		</div>
 		<div class='input-group'>
 			<label for='max-absolute-value'>Max Absolute Value:</label>

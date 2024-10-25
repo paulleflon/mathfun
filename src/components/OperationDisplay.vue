@@ -39,7 +39,7 @@ watch(
 
 
 onMounted(() => {
-	if (props.position === 'current')
+	if (props.position === 'current' && input.value)
 		input.value.focus();
 });
 </script>
