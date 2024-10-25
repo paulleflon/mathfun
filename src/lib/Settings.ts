@@ -8,4 +8,3 @@ export default interface Settings {
 	maxAbsoluteValue: number;
 };
 
-export function checkQuerySettings(query: )
