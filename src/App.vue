@@ -1,8 +1,8 @@
 <script setup lang='ts'>
-import { onMounted, ref, watch } from 'vue';
+import {ref, watch} from 'vue';
 import OperationDisplay from './components/OperationDisplay.vue';
 import SettingsSelector from './components/SettingsSelector.vue';
-import { InteractiveOperation } from './lib/Operation';
+import {InteractiveOperation} from './lib/Operation';
 import type Settings from './lib/Settings';
 
 const settings = ref<Settings>({
@@ -29,6 +29,7 @@ watch(settings, (newSettings: Settings) => {
 	operations.value = InteractiveOperation.randomArray(operations.value.length, newSettings);
 	current.value = 0;
 }, { deep: true });
+
 
 </script>
 

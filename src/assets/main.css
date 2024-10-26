@@ -9,3 +9,21 @@ html, body {
 	box-sizing: border-box;
 	overflow: hidden;
 }
+
+
+@font-face {
+	font-family: 'Fira Sans';
+	src: url('@/assets/fonts/FiraSans.otf');
+	font-weight: 400;
+}
+
+@font-face {
+	font-family: 'Fira Sans';
+	src: url('@/assets/FiraSans-Bold.otf');
+	font-weight: 600;
+}
+
+@font-face {
+	font-family: 'Bluu Next';
+	src: url('/BluuNext.otf'); 
+}

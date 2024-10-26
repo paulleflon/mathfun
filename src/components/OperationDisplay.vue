@@ -1,6 +1,7 @@
 <script setup lang='ts'>
 import type { InteractiveOperation } from '@/lib/Operation';
 import { computed, defineEmits, defineProps, onMounted, ref, watch } from 'vue';
+import StyledInput from './StyledInput.vue';
 
 const props = defineProps<{ operation: InteractiveOperation, index: number, position: 'current' | 'previous' | 'next' }>();
 const emit = defineEmits<{
@@ -8,32 +9,54 @@ const emit = defineEmits<{
 }>();
 
 const input = ref();
+const timeOutRef = ref();
+const inputModel = ref(String(props.operation.answer || ''));
+const numberAnswer = computed(() => parseInt(inputModel.value));
 
-const numberInput = ref(props.operation.answer);
-console.log(props.index, props.position);
 const css = computed(() => {
 	return {
-		transform: `scale(${props.position === 'current' ? 1 : 0.3}) translateY(${props.index * 300}%)`,
+		transform: `scale(${props.position === 'current' ? 1 : 0.3}) translateY(${props.index * 200}%)`,
+		opacity: props.position === 'current' ? 1 : .2,
+		filter: props.position === 'current' ? 'none' : props.position === 'next' ? 'blur(20px)' : 'blur(70px)'
 	}
 });
 
-const updateNumberInput: (e: Event) => void = e => {
-	if (typeof numberInput.value === 'number')
-		emit('update:answer', numberInput.value);
-	const target = e.target as HTMLInputElement;
-	target.style.width = `${target.value.length || 1}ch`;
-};
-watch(
-	() => props,
-	(newVal, oldVal) => {
-		if (newVal.operation.operands[0] !== oldVal.operation.operands[0] || newVal.operation.operands[1] !== oldVal.operation.operands[1]
-			|| newVal.operation.operator !== oldVal.operation.operator) {
-			numberInput.value = null;
+const beforeInput: (e: InputEvent) => void = e => {
+	if (e.inputType.startsWith('insert')) {
+		if (!/^\d|-$/.test(e.data || '')) {
+			e.preventDefault();
 		}
-		if (newVal.position === 'current')
-			input.value.focus();
+		else if (e.data === '-' && inputModel.value !== '') {
+			e.preventDefault();
+		}
+	}
+};
+
+const onInput = () => {
+	clearTimeout(timeOutRef.value);
+	timeOutRef.value = setTimeout(() => {
+		emit('update:answer', numberAnswer.value);
+	}, 100)
+}
+
+watch(
+	() => props.operation,
+	(newVal, oldVal) => {
+		if (newVal.operands[0] !== oldVal.operands[0] || newVal.operands[1] !== oldVal.operands[1]
+			|| newVal.operator !== oldVal.operator) {
+			inputModel.value = '';
+		}
 	},
 	{ deep: true }
+);
+
+watch(
+	() => props.position,
+	(newVal) => {
+		if (newVal === 'current') {
+			input.value.focus();
+		}
+	}
 );
 
 
@@ -45,34 +68,34 @@ onMounted(() => {
 </script>
 
 <template>
-	<Transition>
-
-		<div class='operation' v-if='!props.operation.correct' :style='css'>
-			<div class='left-side'>
-				<div class='left-operand'>{{ props.operation.operands[0] }}</div>
-				<div class='operator'>{{ props.operation.operator }}</div>
-				<div class='right-operand'>{{ props.operation.operands[1] }}</div>
-				<div class='equals'> = </div>
-			</div>
-
-			<div class='input-container'>
-				<input type='number' v-bind:disabled='props.operation.correct || props.position !== "current"'
-					v-model='numberInput' @input='updateNumberInput' ref='input' />
-				<div class='focus-bar'></div>
-			</div>
+	<div class='operation' :style='css'>
+		<div class='left-side'>
+			<div class='left-operand'>{{ props.operation.operands[0] }}</div>
+			<div class='operator'>{{ props.operation.operator === '*' ? '×' : props.operation.operator }}</div>
+			<div class='right-operand'>{{ props.operation.operands[1] }}</div>
+			<div class='equals'> = </div>
 		</div>
-	</Transition>
+		<StyledInput v-model='inputModel' @input='onInput' @beforeinput='beforeInput' ref='input' />
+	</div>
 </template>
 
 <style scoped>
 .operation {
-	transition: .3s ease;
+	transition: .4s ease;
+	font-family: 'Bluu Next', serif;
+}
+
+@media (prefers-reduced-motion) {
+	.operation {
+		transition: all 0s linear .1s;
+		/* Lets the user see their final input before it goes away */
+	}
 }
 
 .left-side {
 	display: inline-flex;
 	margin-right: 5px;
-	font: 100pt Arial;
+	font-size: 100pt;
 }
 
 .input-container {
@@ -85,7 +108,7 @@ input {
 	appearance: none;
 	margin: 0;
 	color: white;
-	font-size: 100pt;
+	font: 600 100pt 'Fira', sans-serif;
 	background-color: transparent;
 	outline: none;
 	border: none;
